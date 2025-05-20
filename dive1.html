@@ -24,6 +24,7 @@
     }
 
     main {
+      min-height: 50vh;
       max-width: 1100px;
       margin: 30px auto;
       background: white;
@@ -37,6 +38,25 @@
       height: 600px;
       border: none;
       border-radius: 6px;
+    }
+
+    .fullscreen-control {
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .fullscreen-control button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .fullscreen-control button:hover {
+      background-color: #0056b3;
     }
 
     .back-home {
@@ -57,20 +77,44 @@
     .back-home a:hover {
       background-color: #1e7e34;
     }
+
+    @media (max-width: 768px) {
+      main {
+        padding: 0;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      iframe {
+        height: 300px;
+        border-radius: 0;
+      }
+    }
   </style>
 </head>
 <body>
-  <header>
-    題庫練習 - 焊接模擬考試
-  </header>
+  <header>題庫練習 - 焊接模擬考試</header>
 
   <main>
+    <!-- DiVE iframe -->
     <iframe 
       src="https://dive.nutn.edu.tw/Experiment/kaleTestExperiment5.jsp?eid=33296&record=false" 
-      name="dive" frameborder="0">
+      name="dive" 
+      id="diveFrame">
     </iframe>
 
-    <!-- ✅ Firebase SDK（compat 版本） -->
+    <!-- 全螢幕控制按鈕 -->
+    <div class="fullscreen-control">
+      <button id="fullscreenBtn">進入全螢幕</button>
+    </div>
+
+    <div class="back-home">
+      <a href="practice.html">回上一頁</a>
+    </div>
+  </main>
+
+   <!-- ✅ Firebase SDK（compat 版本） -->
     <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-auth-compat.js"></script>
@@ -87,19 +131,13 @@
     appId: "1:423082221833:web:1354dc41547ebb81a473d8",
     measurementId: "G-J8S965S8JV"
   };
-      firebase.initializeApp(firebaseConfig);
-    </script>
+    firebase.initializeApp(firebaseConfig);
+  </script>
 
-    <!-- ✅ DiVE linker（只要載入一次） -->
-    <script src="https://dive.nutn.edu.tw/Experiment/js/dive.linker.min.js"></script>
+  <!-- ✅ DiVE Linker -->
+  <script src="https://dive.nutn.edu.tw/Experiment/js/dive.linker.min.js"></script>
 
-    <!-- ✅ 自己的 IO.js 腳本 -->
-    <script src="IO.js"></script>
-
-    <div class="back-home">
-      <a href="practice.html">回上一頁</a>
-    </div>
-  </main>
+  <!-- ✅ 所有邏輯整合在這 -->
+  <script src="IO.js"></script>
 </body>
 </html>
-
