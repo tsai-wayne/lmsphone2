@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>成績資料</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url('image/background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background-color: rgba(0, 0, 0, 0.85);
+      color: #FFA500;
+      padding: 20px 0;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+    main {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    h2 {
+      text-align: center;
+      color: #28a745;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table th, table td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: center;
+    }
+    table th {
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    table tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+    .back-home {
+      text-align: center;
+      margin-top: 40px;
+    }
+    .back-home a {
+      text-decoration: none;
+      color: white;
+      background-color: #28a745;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    .back-home a:hover {
+      background-color: #1e7e34;
+    }
+    /* 響應式 */
+    @media (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      thead {
+        display: none;
+      }
+      tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        background: #f9f9f9;
+        padding: 10px;
+        border-radius: 6px;
+      }
+      td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+      }
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        font-weight: bold;
+        color: #444;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>成績資料</h1>
+  </header>
+
+ <main>
+  <h2>成績查詢</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>測試時間</th>
+        <th>分數</th>
+        <th>評等</th>
+      </tr>
+    </thead>
+    <tbody id="grade-table">
+      <tr><td colspan="3">載入中...</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 新增一個顯示分數的區塊 -->
+  <div id="score" style="margin-top: 20px; font-weight: bold; text-align:center;"></div>
+
+  <div class="back-home">
+    <a href="home.html">回到首頁</a>
+  </div>
+</main>
+
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+    apiKey: "AIzaSyDkrioDj1EdNq5GQuJLOnNvhYnBBN7r-dE",
+    authDomain: "lmsproject-ed507.firebaseapp.com",
+    projectId: "lmsproject-ed507",
+    storageBucket: "lmsproject-ed507.firebasestorage.app",
+    messagingSenderId: "423082221833",
+    appId: "1:423082221833:web:1354dc41547ebb81a473d8",
+    measurementId: "G-J8S965S8JV"
+  };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    const scoreDiv = document.getElementById("score");
+
+    function scoreToGrade(score) {
+      switch(score) {
+        case 3: return "S";
+        case 2: return "A";
+        case 1: return "B";
+        default: return "F";
+      }
+    }
+
+   auth.onAuthStateChanged(user => {
+  const gradeTable = document.getElementById("grade-table");
+  gradeTable.innerHTML = ""; // 清空載入中
+
+  if (!user) {
+    gradeTable.innerHTML = `<tr><td colspan="3">請先登入以查看成績。</td></tr>`;
+    return;
+  }
+
+  const docRef = db.collection("user_scores").doc(user.uid);
+  docRef.get().then(doc => {
+    if (doc.exists) {
+      const score = doc.data().score || 0;
+      const grade = scoreToGrade(score);
+      const now = new Date().toLocaleString();
+      gradeTable.innerHTML = `
+        <tr>
+          <td>${now}</td>
+          <td>${score}</td>
+          <td>${grade}</td>
+        </tr>
+      `;
+    } else {
+      gradeTable.innerHTML = `<tr><td colspan="3">尚無成績紀錄</td></tr>`;
+    }
+  }).catch(err => {
+    gradeTable.innerHTML = `<tr><td colspan="3">讀取成績時發生錯誤</td></tr>`;
+    console.error(err);
+  });
+});
+
+  </script>
+
+</body>
+</html>

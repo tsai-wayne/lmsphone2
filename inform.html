@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>個人資料</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url('image/background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background-color: rgba(3, 3, 3, 0.9);
+      color: #FF4500;
+      padding: 20px 0;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    main {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    form label {
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #0000ff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #0022ff;
+    }
+    .back-home {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .back-home a {
+      text-decoration: none;
+      color: white;
+      background-color: #0015ff;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    .back-home a:hover {
+      background-color: #0011ff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>個人資料</h1>
+  </header>
+  <main>
+    <form id="personal-form">
+      <label for="name">姓名：</label>
+      <input type="text" id="name" required />
+
+      <label for="age">年齡：</label>
+      <input type="number" id="age" required />
+
+      <label for="notes">個性簽名：</label>
+      <textarea id="notes" rows="4" placeholder="請輸入備註資訊"></textarea>
+
+      <button type="submit">儲存資料</button>
+    </form>
+
+    <div class="back-home">
+      <a href="home.html">回到首頁</a>
+    </div>
+  </main>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore.js";
+
+    const firebaseConfig = {
+    apiKey: "AIzaSyDkrioDj1EdNq5GQuJLOnNvhYnBBN7r-dE",
+    authDomain: "lmsproject-ed507.firebaseapp.com",
+    projectId: "lmsproject-ed507",
+    storageBucket: "lmsproject-ed507.firebasestorage.app",
+    messagingSenderId: "423082221833",
+    appId: "1:423082221833:web:1354dc41547ebb81a473d8",
+    measurementId: "G-J8S965S8JV"
+  };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getFirestore();
+
+    function loadUserData(uid) {
+      const userRef = doc(db, "users", uid);
+      getDoc(userRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          document.getElementById("name").value = data.name || "";
+          document.getElementById("age").value = data.age || "";
+          document.getElementById("notes").value = data.notes || "";
+        }
+      });
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadUserData(user.uid);
+
+        document.getElementById("personal-form").addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const name = document.getElementById("name").value.trim();
+          const age = document.getElementById("age").value.trim();
+          const notes = document.getElementById("notes").value.trim();
+
+          if (name && age) {
+            try {
+              const userRef = doc(db, "users", user.uid);
+              await setDoc(userRef, {
+                name,
+                age,
+                notes
+              }, { merge: true });
+              alert("個人資料已儲存！");
+            } catch (err) {
+              console.error("儲存錯誤", err);
+              alert("儲存資料時發生錯誤。請稍後再試。");
+            }
+          } else {
+            alert("請填寫完整的資料！");
+          }
+        });
+      } else {
+        alert("請先登入！");
+        window.location.href = "login.html";
+      }
+    });
+  </script>
+</body>
+</html>

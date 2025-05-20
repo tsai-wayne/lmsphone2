@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>會員登入</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 300px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 1.5rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .toggle {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .toggle a {
+      color: #007bff;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2 id="form-title">登入</h2>
+    <form id="auth-form">
+      <label for="email">電子郵件</label>
+      <input type="email" id="email" required />
+      <label for="password">密碼</label>
+      <input type="password" id="password" required />
+      <button type="submit" id="submit-btn">登入</button>
+      <div class="error" id="error-msg"></div>
+    </form>
+    <div class="toggle">
+      <span id="toggle-text">尚未註冊？</span>
+      <a id="toggle-link">建立帳號</a>
+    </div>
+  </div>
+
+  <!-- Firebase SDK 模組（type="module"） -->
+  <script type="module">
+    // 1. 引入 Firebase 模組
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-auth.js";
+
+    // 2. Firebase 設定
+    const firebaseConfig = {
+    apiKey: "AIzaSyDkrioDj1EdNq5GQuJLOnNvhYnBBN7r-dE",
+    authDomain: "lmsproject-ed507.firebaseapp.com",
+    projectId: "lmsproject-ed507",
+    storageBucket: "lmsproject-ed507.firebasestorage.app",
+    messagingSenderId: "423082221833",
+    appId: "1:423082221833:web:1354dc41547ebb81a473d8",
+    measurementId: "G-J8S965S8JV"
+  };
+    // 3. 初始化 Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // 4. 表單邏輯
+    let isLoginMode = true;
+
+    const form = document.getElementById("auth-form");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const errorMsg = document.getElementById("error-msg");
+    const toggleLink = document.getElementById("toggle-link");
+    const toggleText = document.getElementById("toggle-text");
+    const formTitle = document.getElementById("form-title");
+    const submitBtn = document.getElementById("submit-btn");
+
+    // 切換登入/註冊
+    toggleLink.addEventListener("click", () => {
+      isLoginMode = !isLoginMode;
+      formTitle.textContent = isLoginMode ? "登入" : "註冊";
+      submitBtn.textContent = isLoginMode ? "登入" : "註冊";
+      toggleText.textContent = isLoginMode ? "尚未註冊？" : "已有帳號？";
+      toggleLink.textContent = isLoginMode ? "建立帳號" : "回到登入";
+      errorMsg.textContent = "";
+    });
+
+    // 表單提交
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = emailInput.value;
+      const password = passwordInput.value;
+
+      if (isLoginMode) {
+        // 登入
+        signInWithEmailAndPassword(auth, email, password)
+          .then(() => {
+            window.location.href = "home.html"; // 登入成功 → 導向 home.html
+          })
+          .catch((err) => {
+            errorMsg.textContent = "登入失敗：" + err.message;
+          });
+      } else {
+        // 註冊
+        createUserWithEmailAndPassword(auth, email, password)
+          .then(() => {
+            alert("註冊成功，請重新登入");
+            toggleLink.click(); // 切回登入畫面
+          })
+          .catch((err) => {
+            errorMsg.textContent = "註冊失敗：" + err.message;
+          });
+      }
+    });
+  </script>
+</body>
+</html>

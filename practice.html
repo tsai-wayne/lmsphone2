@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>題庫練習</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url('image/background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      background-color: rgba(0, 0, 0, 0.85);
+      color: #FF4500;
+      padding: 20px 0;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      text-align: center;
+      color: #28a745;
+      margin-bottom: 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .grid-item {
+      background-color: #f0f0f0;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    .grid-item:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    }
+
+    .grid-item.locked:hover::after {
+      content: "尚未解鎖";
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .grid-item img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+    }
+
+    .grid-item span {
+      display: block;
+      padding: 10px 5px;
+      font-weight: bold;
+      background-color: #e0e0e0;
+      min-height: 40px;
+    }
+
+    a.grid-item {
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .back-home {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .back-home a {
+      text-decoration: none;
+      color: white;
+      background-color: #28a745;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    .back-home a:hover {
+      background-color: #1e7e34;
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 點擊動畫 */
+    .clicked {
+      animation: clickPop 0.3s ease;
+    }
+
+    @keyframes clickPop {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>題庫練習</h1>
+  </header>
+
+  <main>
+    <h2>請選擇練習題目</h2>
+    <div class="grid" id="question-grid">
+      <!-- 題目格子由 JavaScript 自動產生 -->
+    </div>
+
+    <div class="back-home">
+      <a href="home.html">回到首頁</a>
+    </div>
+  </main>
+
+  <script>
+  const grid = document.getElementById("question-grid");
+
+  const imageList = [
+    "thing.jpg", "lock.png", "lock.png", "lock.png",
+    "lock.png", "lock.png", "lock.png", "lock.png"
+  ];
+
+  const titleList = [
+    "A1F2", "A1H2", "A1V2", "A1O2",
+    "A2F3", "A2H3", "A2V3", "A2O3"
+  ];
+
+  for (let i = 1; i <= 8; i++) {
+    const id = `dive${i}`;
+    const img = imageList[i - 1];
+    const title = titleList[i - 1];
+    const isUnlocked = i <= 1;
+
+    const item = document.createElement(isUnlocked ? "a" : "div");
+    item.className = "grid-item" + (isUnlocked ? "" : " locked");
+    if (isUnlocked) {
+      item.href = `${id}.html`;
+      item.addEventListener("click", (e) => {
+        item.classList.add("clicked");
+        setTimeout(() => item.classList.remove("clicked"), 300);
+      });
+    }
+
+    item.innerHTML = `
+      <img src="image/${img}" alt="${title}">
+      <span>${title}</span>
+    `;
+
+    grid.appendChild(item);
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>題庫練習</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('image/background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+    }
+
+    header {
+      background-color: rgba(0, 0, 0, 0.9);
+      color: #FF4500;
+      text-align: center;
+      padding: 20px 0;
+      font-size: 24px;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    }
+
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      border-radius: 6px;
+    }
+
+    .back-home {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .back-home a {
+      text-decoration: none;
+      background-color: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .back-home a:hover {
+      background-color: #1e7e34;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    題庫練習 - 焊接模擬考試
+  </header>
+
+  <main>
+    <iframe 
+      src="https://dive.nutn.edu.tw/Experiment/kaleTestExperiment5.jsp?eid=33296&record=false" 
+      name="dive" frameborder="0">
+    </iframe>
+
+    <!-- ✅ Firebase SDK（compat 版本） -->
+    <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-auth-compat.js"></script>
+
+
+    <!-- ✅ Firebase 初始化 -->
+    <script>
+      const firebaseConfig = {
+    apiKey: "AIzaSyDkrioDj1EdNq5GQuJLOnNvhYnBBN7r-dE",
+    authDomain: "lmsproject-ed507.firebaseapp.com",
+    projectId: "lmsproject-ed507",
+    storageBucket: "lmsproject-ed507.firebasestorage.app",
+    messagingSenderId: "423082221833",
+    appId: "1:423082221833:web:1354dc41547ebb81a473d8",
+    measurementId: "G-J8S965S8JV"
+  };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <!-- ✅ DiVE linker（只要載入一次） -->
+    <script src="https://dive.nutn.edu.tw/Experiment/js/dive.linker.min.js"></script>
+
+    <!-- ✅ 自己的 IO.js 腳本 -->
+    <script src="IO.js"></script>
+
+    <div class="back-home">
+      <a href="practice.html">回上一頁</a>
+    </div>
+  </main>
+</body>
+</html>
+

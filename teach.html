@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教學影片</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background: url('image/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        header {
+            background-color: #000000;
+            color: #FF4500;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95); /* 半透明白底方便閱讀 */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .video-container {
+            margin-bottom: 30px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 450px;
+            border: none;
+            border-radius: 8px;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .back-home a {
+            text-decoration: none;
+            color: white;
+            background-color: #FF6347;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .back-home a:hover {
+            background-color: #00ff2f;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>教學影片</h1>
+    </header>
+    <main>
+        <p>在此頁面，您可以觀看與學習相關的教學影片：</p>
+
+        <div class="video-container">
+            <h3>影片 1：</h3>
+            <iframe src="https://www.youtube.com/embed/FhTtjlspQNI" allowfullscreen></iframe>
+        </div>
+
+        <div class="video-container">
+            <h3>影片 2：</h3>
+            <iframe src="https://www.youtube.com/embed/YADrM_rUkg0?start=219" allowfullscreen></iframe>
+        </div>
+
+        <div class="video-container">
+            <h3>影片 3：</h3>
+            <iframe src="https://www.youtube.com/embed/c8iDIStGqb8?start=459" allowfullscreen></iframe>
+        </div>
+
+        <div class="back-home">
+            <a href="home.html">回到首頁</a>
+        </div>
+    </main>
+</body>
+</html>

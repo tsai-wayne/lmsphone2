@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>課程報名 - 焊接技術</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f7f7;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #ffffff;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 24px;
+    }
+    p, li {
+      font-size: 16px;
+      color: #444;
+      line-height: 1.6;
+    }
+   label {
+  font-weight: bold;
+  display: block;
+  margin-top: 12px;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 16px;
+      padding: 10px 20px;
+      background-color: #FF6347;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #00ff2f;
+    }
+    .back-home {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .back-home a {
+      text-decoration: none;
+      color: white;
+      background-color: #FF6347;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    .back-home a:hover {
+      background-color: #00ff2f;
+    }
+  </style>
+</head>
+<body>
+  <header class="new">
+    <h1>課程報名</h1>
+  </header>
+
+  <section class="container">
+    <h2>報名資訊</h2>
+    <p>請填寫以下報名資訊，我們將儘快與您聯繫。</p>
+
+    <form id="course-form">
+      <label for="name">姓名：</label>
+      <input type="text" id="name" required />
+
+      <label for="email">電子信箱：</label>
+      <input type="email" id="email" required />
+
+      <label for="phone">聯絡電話：</label>
+      <input type="tel" id="phone" required />
+
+      <button type="submit">提交報名</button>
+    </form>
+
+    <h3>報名注意事項：</h3>
+    <ul>
+      <li>本報名表為預約填寫，我們將主動聯繫您完成後續流程。</li>
+      <li>請確認您填寫的聯絡資訊正確無誤。</li>
+      <li>本報名不保證立即錄取，依照課程名額安排。</li>
+    </ul>
+
+    <p>或直接前往官方報名平台：<br>
+      <a href="https://www.9001.org.tw/tw/ApplyDetail/1078" target="_blank">https://www.9001.org.tw/tw/ApplyDetail/1078</a>
+    </p>
+
+    <div class="back-home">
+      <a href="home.html">回首頁</a>
+    </div>
+  </section>
+
+  <!-- Firebase 功能 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore.js";
+
+    const firebaseConfig = {
+    apiKey: "AIzaSyDkrioDj1EdNq5GQuJLOnNvhYnBBN7r-dE",
+    authDomain: "lmsproject-ed507.firebaseapp.com",
+    projectId: "lmsproject-ed507",
+    storageBucket: "lmsproject-ed507.firebasestorage.app",
+    messagingSenderId: "423082221833",
+    appId: "1:423082221833:web:1354dc41547ebb81a473d8",
+    measurementId: "G-J8S965S8JV"
+  };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("course-form");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+
+      try {
+        await addDoc(collection(db, "courseRegistrations"), {
+          name,
+          email,
+          phone,
+          time: Date.now()
+        });
+        alert("報名成功！我們將儘快與您聯絡。");
+        form.reset();
+      } catch (err) {
+        alert("報名失敗：" + err.message);
+      }
+    });
+  </script>
+</body>
+</html>
