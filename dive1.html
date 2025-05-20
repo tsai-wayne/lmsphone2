@@ -84,100 +84,108 @@
   </header>
 
   <main>
-    <!-- ✅ DiVE iframe 加上 allowfullscreen -->
+  <!-- 🔽 外層容器，讓手機可以針對這個 div 進入全螢幕 -->
+  <div id="container" style="position: relative;">
     <iframe 
       src="https://dive.nutn.edu.tw/Experiment/kaleTestExperiment5.jsp?eid=33296&record=false" 
       name="dive" 
       id="diveFrame" 
+      frameborder="0" 
       allowfullscreen>
     </iframe>
 
-    <!-- ✅ 全螢幕控制按鈕 -->
-    <div class="fullscreen-control">
-      <button id="fullscreenBtn">進入全螢幕</button>
+    <!-- ✅ 全螢幕按鈕 -->
+    <div class="fullscreen-control" style="text-align: center; margin-top: 10px;">
+      <button id="fullscreenBtn" style="
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      ">進入全螢幕</button>
     </div>
+  </div>
 
-    <!-- ✅ Firebase SDK（compat 版本） -->
-    <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-auth-compat.js"></script>
+  <!-- 🔁 原本 Firebase、Linker、IO.js 都保留 -->
+  <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-auth-compat.js"></script>
 
-    <!-- ✅ Firebase 初始化 -->
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyCqoHAGQ42luK6k0v9XiRP59Es4gpVm95Q",
-        authDomain: "learningproject-fc101.firebaseapp.com",
-        projectId: "learningproject-fc101",
-        storageBucket: "learningproject-fc101.firebasestorage.app",
-        messagingSenderId: "926810721151",
-        appId: "1:926810721151:web:70da1b738f58ea7692284a",
-        measurementId: "G-09SC8T46GD"
-      };
-      firebase.initializeApp(firebaseConfig);
-    </script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCqoHAGQ42luK6k0v9XiRP59Es4gpVm95Q",
+      authDomain: "learningproject-fc101.firebaseapp.com",
+      projectId: "learningproject-fc101",
+      storageBucket: "learningproject-fc101.firebasestorage.app",
+      messagingSenderId: "926810721151",
+      appId: "1:926810721151:web:70da1b738f58ea7692284a",
+      measurementId: "G-09SC8T46GD"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
 
-    <!-- ✅ DiVE linker -->
-    <script src="https://dive.nutn.edu.tw/Experiment/js/dive.linker.min.js"></script>
+  <!-- ✅ DiVE linker -->
+  <script src="https://dive.nutn.edu.tw/Experiment/js/dive.linker.min.js"></script>
 
-    <!-- ✅ 自己的 IO.js -->
-    <script src="IO.js"></script>
+  <!-- ✅ 你的 IO.js -->
+  <script src="IO.js"></script>
 
-    <!-- ✅ 返回按鈕 -->
-    <div class="back-home">
-      <a href="practice.html">回上一頁</a>
-    </div>
+  <!-- ✅ 返回按鈕 -->
+  <div class="back-home">
+    <a href="practice.html">回上一頁</a>
+  </div>
 
-    <!-- ✅ 全螢幕與完成狀態控制 -->
-    <script>
-      const iframe = document.getElementById("diveFrame");
-      const fullscreenBtn = document.getElementById("fullscreenBtn");
-      const diveLinker = new DiveLinker("dive");
+  <!-- ✅ 全螢幕與完成事件邏輯 -->
+  <script>
+    const container = document.getElementById("container");
+    const iframe = document.getElementById("diveFrame");
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
+    const diveLinker = new DiveLinker("dive");
 
-      fullscreenBtn.addEventListener("click", async () => {
-        try {
-          if (!document.fullscreenElement) {
-            await iframe.requestFullscreen();
-          } else {
-            await document.exitFullscreen();
-          }
-        } catch (err) {
-          alert("⚠️ 無法切換全螢幕：" + err.message);
+    fullscreenBtn.addEventListener("click", async () => {
+      try {
+        if (!document.fullscreenElement) {
+          await container.requestFullscreen(); // 用 container，手機會比較穩
+        } else {
+          await document.exitFullscreen();
         }
-      });
+      } catch (err) {
+        alert("⚠️ 無法切換全螢幕：" + err.message);
+      }
+    });
 
-      document.addEventListener("fullscreenchange", () => {
-        const isFull = !!document.fullscreenElement;
-        fullscreenBtn.textContent = isFull ? "退出全螢幕" : "進入全螢幕";
-      });
+    document.addEventListener("fullscreenchange", () => {
+      const isFull = !!document.fullscreenElement;
+      fullscreenBtn.textContent = isFull ? "退出全螢幕" : "進入全螢幕";
+      iframe.style.height = isFull ? "100vh" : "600px";
+    });
 
-      // 監控 DiVE 載入與完成狀態
-      window.onload = () => {
-        const waitDive = setInterval(() => {
-          if (diveLinker.getLoadingStatus()) {
-            clearInterval(waitDive);
-            console.log("✅ DiVE 專案載入完成");
+    // DiVE 完成後退出全螢幕
+    window.onload = () => {
+      const waitDive = setInterval(() => {
+        if (diveLinker.getLoadingStatus()) {
+          clearInterval(waitDive);
+          diveLinker.enableBlock(false);
+          diveLinker.start();
 
-            diveLinker.enableBlock(false); // 移除浮水印
-            diveLinker.start(); // 啟動
-
-            const checkDone = setInterval(() => {
-              const isComplete = diveLinker.checkComplete();
-              console.log("🎯 完成狀態：", isComplete);
-              if (isComplete === true) {
-                clearInterval(checkDone);
-                if (document.fullscreenElement) {
-                  document.exitFullscreen().then(() => {
-                    alert("✅ 測驗完成，已退出全螢幕！");
-                  });
-                } else {
-                  alert("✅ 測驗完成！");
-                }
+          const checkDone = setInterval(() => {
+            if (diveLinker.checkComplete()) {
+              clearInterval(checkDone);
+              if (document.fullscreenElement) {
+                document.exitFullscreen().then(() => {
+                  alert("✅ 測驗完成，已退出全螢幕！");
+                });
+              } else {
+                alert("✅ 測驗完成！");
               }
-            }, 1000);
-          }
-        }, 300);
-      };
-    </script>
-  </main>
+            }
+          }, 1000);
+        }
+      }, 300);
+    };
+  </script>
+</main>
 </body>
 </html>
