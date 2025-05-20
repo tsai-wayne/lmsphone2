@@ -24,8 +24,7 @@
     }
 
     main {
-      min-height: 50vh;
-      max-width: 1200px;
+      max-width: 1100px;
       margin: 30px auto;
       background: white;
       border-radius: 8px;
@@ -42,7 +41,7 @@
 
     .fullscreen-control {
       text-align: center;
-      margin: 10px 0;
+      margin: 15px 0;
     }
 
     .fullscreen-control button {
@@ -77,21 +76,6 @@
     .back-home a:hover {
       background-color: #1e7e34;
     }
-
-    /* 手機版 */
-    @media (max-width: 768px) {
-      main {
-        padding: 0;
-        margin: 0;
-        border-radius: 0;
-        box-shadow: none;
-      }
-
-      iframe {
-        height: 300px;
-        border-radius: 0;
-      }
-    }
   </style>
 </head>
 <body>
@@ -100,113 +84,100 @@
   </header>
 
   <main>
-    <!-- DiVE iframe -->
+    <!-- ✅ DiVE iframe 加上 allowfullscreen -->
     <iframe 
       src="https://dive.nutn.edu.tw/Experiment/kaleTestExperiment5.jsp?eid=33296&record=false" 
       name="dive" 
-      id="diveFrame">
+      id="diveFrame" 
+      allowfullscreen>
     </iframe>
-<!-- ✅ Firebase SDK（compat 版本） -->
-    <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-auth-compat.js"></script>
 
-
-    <!-- ✅ Firebase 初始化 -->
-    <script>
-      const firebaseConfig = {
-    apiKey: "AIzaSyDkrioDj1EdNq5GQuJLOnNvhYnBBN7r-dE",
-    authDomain: "lmsproject-ed507.firebaseapp.com",
-    projectId: "lmsproject-ed507",
-    storageBucket: "lmsproject-ed507.firebasestorage.app",
-    messagingSenderId: "423082221833",
-    appId: "1:423082221833:web:1354dc41547ebb81a473d8",
-    measurementId: "G-J8S965S8JV"
-  };
-      firebase.initializeApp(firebaseConfig);
-    </script>
-    <!-- 全螢幕控制按鈕 -->
+    <!-- ✅ 全螢幕控制按鈕 -->
     <div class="fullscreen-control">
       <button id="fullscreenBtn">進入全螢幕</button>
     </div>
 
-    <!-- 返回按鈕 -->
+    <!-- ✅ Firebase SDK（compat 版本） -->
+    <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.7.3/firebase-auth-compat.js"></script>
+
+    <!-- ✅ Firebase 初始化 -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCqoHAGQ42luK6k0v9XiRP59Es4gpVm95Q",
+        authDomain: "learningproject-fc101.firebaseapp.com",
+        projectId: "learningproject-fc101",
+        storageBucket: "learningproject-fc101.firebasestorage.app",
+        messagingSenderId: "926810721151",
+        appId: "1:926810721151:web:70da1b738f58ea7692284a",
+        measurementId: "G-09SC8T46GD"
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <!-- ✅ DiVE linker -->
+    <script src="https://dive.nutn.edu.tw/Experiment/js/dive.linker.min.js"></script>
+
+    <!-- ✅ 自己的 IO.js -->
+    <script src="IO.js"></script>
+
+    <!-- ✅ 返回按鈕 -->
     <div class="back-home">
       <a href="practice.html">回上一頁</a>
     </div>
-  </main>
 
-  <!-- DiVE Linker -->
-  <script src="https://dive.nutn.edu.tw/Experiment/js/dive.linker.min.js"></script>
-<!-- ✅ 自己的 IO.js 腳本 -->
-    <script src="IO.js"></script>
+    <!-- ✅ 全螢幕與完成狀態控制 -->
+    <script>
+      const iframe = document.getElementById("diveFrame");
+      const fullscreenBtn = document.getElementById("fullscreenBtn");
+      const diveLinker = new DiveLinker("dive");
 
-  <script>
-    const iframe = document.getElementById("diveFrame");
-    const fullscreenBtn = document.getElementById("fullscreenBtn");
-    const diveLinker = new DiveLinker("dive");
-
-    // 進入 / 退出全螢幕邏輯
-    fullscreenBtn.addEventListener("click", async () => {
-      try {
-        if (!document.fullscreenElement) {
-          await iframe.requestFullscreen();
-          fullscreenBtn.textContent = "退出全螢幕";
-
-          // 嘗試鎖定橫屏
-          if (screen.orientation && screen.orientation.lock) {
-            try {
-              await screen.orientation.lock("landscape");
-              console.log("✅ 鎖定橫屏成功");
-            } catch (err) {
-              console.warn("⚠️ 無法鎖定橫屏：", err.message);
-            }
+      fullscreenBtn.addEventListener("click", async () => {
+        try {
+          if (!document.fullscreenElement) {
+            await iframe.requestFullscreen();
+          } else {
+            await document.exitFullscreen();
           }
-        } else {
-          await document.exitFullscreen();
-          fullscreenBtn.textContent = "進入全螢幕";
+        } catch (err) {
+          alert("⚠️ 無法切換全螢幕：" + err.message);
         }
-      } catch (e) {
-        alert("⚠️ 無法切換全螢幕：" + e.message);
-      }
-    });
+      });
 
-    
+      document.addEventListener("fullscreenchange", () => {
+        const isFull = !!document.fullscreenElement;
+        fullscreenBtn.textContent = isFull ? "退出全螢幕" : "進入全螢幕";
+      });
 
-    // 切換按鈕文字
-    document.addEventListener("fullscreenchange", () => {
-      const isFull = !!document.fullscreenElement;
-      fullscreenBtn.textContent = isFull ? "退出全螢幕" : "進入全螢幕";
-    });
+      // 監控 DiVE 載入與完成狀態
+      window.onload = () => {
+        const waitDive = setInterval(() => {
+          if (diveLinker.getLoadingStatus()) {
+            clearInterval(waitDive);
+            console.log("✅ DiVE 專案載入完成");
 
-    // DiVE 專案載入完成後自動啟動，並監控完成狀態
-    window.onload = () => {
-      const waitDive = setInterval(() => {
-        if (diveLinker.getLoadingStatus()) {
-          clearInterval(waitDive);
-          console.log("✅ DiVE 專案載入完成");
+            diveLinker.enableBlock(false); // 移除浮水印
+            diveLinker.start(); // 啟動
 
-          diveLinker.enableBlock(false); // 關閉浮水印
-          diveLinker.start();            // 啟動專案
-
-          const checkDone = setInterval(() => {
-            const isComplete = diveLinker.checkComplete();
-            console.log("🎯 完成狀態：", isComplete);
-
-            if (isComplete === true) {
-              clearInterval(checkDone);
-              if (document.fullscreenElement) {
-                document.exitFullscreen().then(() => {
-                  alert("✅ 測驗完成，已退出全螢幕！");
-                });
-              } else {
-                alert("✅ 測驗完成！");
+            const checkDone = setInterval(() => {
+              const isComplete = diveLinker.checkComplete();
+              console.log("🎯 完成狀態：", isComplete);
+              if (isComplete === true) {
+                clearInterval(checkDone);
+                if (document.fullscreenElement) {
+                  document.exitFullscreen().then(() => {
+                    alert("✅ 測驗完成，已退出全螢幕！");
+                  });
+                } else {
+                  alert("✅ 測驗完成！");
+                }
               }
-            }
-          }, 1000);
-        }
-      }, 300);
-    };
-  </script>
+            }, 1000);
+          }
+        }, 300);
+      };
+    </script>
+  </main>
 </body>
 </html>
